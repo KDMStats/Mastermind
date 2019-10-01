@@ -32,4 +32,29 @@ public class Evaluation {
 		return "Evaluation [redPin=" + redPin + ", yellowPin=" + yellowPin
 				+ "]";
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + redPin;
+		result = prime * result + yellowPin;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Evaluation other = (Evaluation) obj;
+		if (redPin != other.redPin)
+			return false;
+		if (yellowPin != other.yellowPin)
+			return false;
+		return true;
+	}
 }

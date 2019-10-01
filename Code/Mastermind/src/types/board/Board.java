@@ -16,11 +16,11 @@ public class Board {
 	public Board(int turnLimit) {
 		this.turn = 1;
 		this.turnLimit = turnLimit;
-		System.out.println("Turn " + turn + "/" + turnLimit);
+		LogHandler.getInstance().addLog("Turn " + turn + "/" + turnLimit);
 	}
 
-	public boolean isFinalTurn() {
-		return turn == turnLimit;
+	public int getTurnCount() {
+		return turn;
 	}
 
 	public void nextTurn() {
@@ -29,7 +29,7 @@ public class Board {
 					.crash("Trying to increment Turn, already Turn 10");
 		}
 		this.turn++;
-		System.out.println("Turn " + turn + "/" + turnLimit);
+		LogHandler.getInstance().addLog("Turn " + turn + "/" + turnLimit);
 	}
 
 	public void addNextCombination(Combination combination,
@@ -44,6 +44,22 @@ public class Board {
 		}
 		combinations.put(turn, combination);
 		evaluations.put(turn, evaluation);
+	}
+
+	public Combination getLastGuess() {
+		if (!combinations.containsKey(turn - 1)) {
+			LogHandler.getInstance()
+					.crash("Cannot find Combination for last turn");
+		}
+		return combinations.get(turn - 1);
+	}
+
+	public Evaluation getLastEvaluation() {
+		if (!evaluations.containsKey(turn - 1)) {
+			LogHandler.getInstance()
+					.crash("Cannot find Evaluation for last turn");
+		}
+		return evaluations.get(turn - 1);
 	}
 
 }

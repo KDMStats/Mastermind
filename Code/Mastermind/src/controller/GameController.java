@@ -1,71 +1,47 @@
 package controller;
 
-import java.util.Scanner;
-
+import controller.playerModules.APlayerModule;
+import logs.LogHandler;
 import run.MastermindRun;
 import types.board.Board;
 import types.board.Combination;
 import types.board.Evaluation;
-import utils.SecretCodeUtils;
 
 public class GameController {
-
-	private static Scanner scanner = new Scanner(System.in);
 
 	private Board board;
 
 	private SecretCodeController secretCodeController;
 
-	public GameController(Combination secretCode) {
-		System.out.println("Secret Code: " + secretCode);
+	private PlayerController playerController;
+
+	public GameController(Combination secretCode, APlayerModule playerModule) {
+		LogHandler.getInstance().addLog("Secret Code: " + secretCode);
 		this.board = new Board(MastermindRun.TURN_LIMIT);
 		this.secretCodeController = new SecretCodeController(secretCode);
+		this.playerController = new PlayerController(playerModule);
 	}
 
-	public boolean run() {
+	public int run() {
 		while (true) {
 			// Make Guess
-			Combination turnGuess = getGuessInput();
+			Combination turnGuess = playerController.formulateGuess(board);
 
 			// Check Guess
 			Evaluation evaluation = secretCodeController
 					.evaluateCombination(turnGuess);
-			System.out.println("Evaluation: " + evaluation);
+			LogHandler.getInstance().addLog("Evaluation: " + evaluation);
 
 			if (evaluation.getRedPin() == 4) {
-				return true;
+				return board.getTurnCount();
 			}
 			board.addNextCombination(turnGuess, evaluation);
 
-			if (board.isFinalTurn()) {
-				return false;
+			if (board.getTurnCount() == MastermindRun.TURN_LIMIT) {
+				return -1;
 			}
 			board.nextTurn();
 		}
-	}
-
-	// RED, YELLOW, GREEN, ORANGE, PINK, PURPLE, BLUE, WHITE
-	// r y g o p u b w
-	private Combination getGuessInput() {
-		String inputString = "";
-		Combination combo = null;
-
-		while (true) {
-			System.out.println("r y g o p u b w");
-			System.out.print(": ");
-			inputString = scanner.nextLine();
-			if (inputString.length() != 4) {
-				System.out.println("Invalid Input");
-				continue;
-			}
-			combo = SecretCodeUtils.parseUserInput(inputString);
-			if (combo == null) {
-				System.out.println("Invalid Input");
-				continue;
-			}
-			break;
-		}
-		return combo;
 	}
 
 }

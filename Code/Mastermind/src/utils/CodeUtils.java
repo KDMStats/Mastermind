@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import types.board.Combination;
+import types.board.Evaluation;
 import types.tokens.Token;
 import types.tokens.TokenColour;
 
-public class SecretCodeUtils {
+public class CodeUtils {
 
 	public static Combination generateRandomCombination(
 			boolean allowDuplicateColours) {
@@ -38,4 +39,22 @@ public class SecretCodeUtils {
 
 		return new Combination(tokens);
 	}
+
+	public static Evaluation evaluateCombination(Combination secretCode,
+			Combination guess) {
+		int redPinCount = 0;
+		int yellowPinCount = 0;
+
+		for (int index = 0; index < secretCode.getTokens().size(); index++) {
+			Token token = secretCode.getTokens().get(index);
+			if (guess.containsTokenAtIndex(token, index)) {
+				redPinCount++;
+			} else if (guess.containsTokenAtAnyIndex(token)) {
+				yellowPinCount++;
+			}
+		}
+
+		return new Evaluation(redPinCount, yellowPinCount);
+	}
+
 }
